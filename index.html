@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ForensicAI | Truth Detection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: white; overflow-x: hidden; }
+        .glow-text { text-shadow: 0 0 20px rgba(0, 229, 255, 0.3); }
+        .glass-card { 
+            background: #0d0d0d; 
+            border: 1px solid #1a1a1a; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover { 
+            border-color: #00e5ff; 
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px -10px rgba(0, 229, 255, 0.2);
+        }
+        .btn-cyan {
+            background: transparent;
+            border: 1px solid #00e5ff;
+            color: #00e5ff;
+            transition: all 0.2s ease;
+        }
+        .btn-cyan:hover {
+            background: #00e5ff;
+            color: #0a0a0a;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+        }
+        .hidden { display: none; }
+        textarea, input { background: #0d0d0d !important; border: 1px solid #1a1a1a !important; color: white !important; }
+        textarea:focus, input:focus { border-color: #00e5ff !important; outline: none; }
+    </style>
+</head>
+<body>
+
+    <main id="landing-page" class="min-h-screen flex flex-col items-center justify-center p-6">
+        <div class="text-center">
+            <h1 class="text-7xl md:text-9xl font-black tracking-tighter mb-4 glow-text uppercase italic">
+                Forensic<span class="text-[#00e5ff]">AI</span>
+            </h1>
+            <p class="text-gray-500 tracking-[0.3em] text-sm md:text-lg mb-12 uppercase font-light">
+                Detect What's Real. <span class="text-white">Expose What's Not.</span>
+            </p>
+            <button onclick="showPage('hub-page')" class="btn-cyan px-10 py-4 text-lg font-bold uppercase tracking-widest rounded-sm">
+                Get Started
+            </button>
+        </div>
+    </main>
+
+    <main id="hub-page" class="min-h-screen hidden flex flex-col items-center justify-center p-6">
+        <div class="max-w-6xl w-full">
+            <header class="mb-12 text-center">
+                <h2 class="text-3xl font-bold tracking-tight text-white mb-2">Forensic <span class="text-[#00e5ff]">Analysis Hub</span></h2>
+                <p class="text-gray-500">Select a specialized module to begin investigation.</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-card p-8 rounded-lg flex flex-col items-center text-center">
+                    <div class="mb-6 text-[#00e5ff]"><i data-lucide="image" class="w-12 h-12"></i></div>
+                    <h3 class="text-xl font-bold mb-3">Analyze Image</h3>
+                    <p class="text-gray-400 text-sm mb-8 leading-relaxed">AI detects deepfake manipulation and facial artifacts.</p>
+                    <button onclick="showPage('image-page')" class="btn-cyan w-full py-3 font-bold uppercase text-xs tracking-widest">Analyze Image</button>
+                </div>
+                <div class="glass-card p-8 rounded-lg flex flex-col items-center text-center">
+                    <div class="mb-6 text-[#00e5ff]"><i data-lucide="file-text" class="w-12 h-12"></i></div>
+                    <h3 class="text-xl font-bold mb-3">Verify Article</h3>
+                    <p class="text-gray-400 text-sm mb-8 leading-relaxed">AI checks for misinformation and bias patterns in text content.</p>
+                    <button onclick="showPage('article-page')" class="btn-cyan w-full py-3 font-bold uppercase text-xs tracking-widest">Verify Article</button>
+                </div>
+                <div class="glass-card p-8 rounded-lg flex flex-col items-center text-center">
+                    <div class="mb-6 text-[#00e5ff]"><i data-lucide="link" class="w-12 h-12"></i></div>
+                    <h3 class="text-xl font-bold mb-3">Inspect URL</h3>
+                    <p class="text-gray-400 text-sm mb-8 leading-relaxed">AI checks domain credibility and high-risk content indicators.</p>
+                    <button onclick="showPage('url-page')" class="btn-cyan w-full py-3 font-bold uppercase text-xs tracking-widest">Inspect URL</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <main id="image-page" class="min-h-screen hidden flex flex-col items-center p-6 pt-20">
+        <div class="max-w-2xl w-full">
+            <button onclick="showPage('hub-page')" class="text-[#00e5ff] mb-8 flex items-center gap-2 hover:underline text-xs uppercase tracking-widest">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Hub
+            </button>
+            <h2 class="text-4xl font-bold mb-2">Image <span class="text-[#00e5ff]">Forensics</span></h2>
+            <div id="drop-zone" class="border-2 border-dashed border-gray-800 bg-[#0d0d0d] p-12 rounded-xl text-center cursor-pointer hover:border-[#00e5ff] transition mt-6">
+                <input type="file" id="file-input" class="hidden" accept="image/*">
+                <div id="upload-placeholder">
+                    <i data-lucide="upload-cloud" class="w-12 h-12 mx-auto mb-4 text-gray-600"></i>
+                    <p class="text-gray-400">Click to upload forensic sample</p>
+                </div>
+                <img id="image-preview" class="hidden max-h-64 mx-auto rounded-lg">
+            </div>
+            <button id="analyze-btn" onclick="runImageAnalysis()" class="btn-cyan w-full mt-6 py-4 font-bold uppercase tracking-widest hidden">Run Analysis</button>
+            
+            <div id="results-area" class="hidden mt-10 p-8 border border-gray-800 rounded-xl bg-[#0d0d0d]">
+                <div class="flex justify-between items-end mb-6">
+                    <div><p class="text-xs text-gray-500 uppercase mb-1">Verdict</p><h3 id="verdict-text" class="text-4xl font-black italic">---</h3></div>
+                    <div class="text-right"><p class="text-xs text-gray-500 uppercase mb-1">Confidence</p><span id="confidence-score" class="text-2xl font-bold text-[#00e5ff]">0%</span></div>
+                </div>
+                <ul id="reasons-list" class="space-y-3 border-t border-gray-800 pt-6 text-gray-400 text-sm"></ul>
+                <button onclick="location.reload()" class="w-full mt-8 py-2 text-xs text-gray-600 hover:text-white uppercase">Analyze Another</button>
+            </div>
+        </div>
+    </main>
+
+    <main id="article-page" class="min-h-screen hidden flex flex-col items-center p-6 pt-20">
+        <div class="max-w-3xl w-full">
+            <button onclick="showPage('hub-page')" class="text-[#00e5ff] mb-8 flex items-center gap-2 hover:underline text-xs uppercase tracking-widest">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Hub
+            </button>
+            <h2 class="text-4xl font-bold mb-6">Article <span class="text-[#00e5ff]">Scanner</span></h2>
+            <textarea id="article-input" rows="8" class="w-full rounded-xl p-6 mb-4" placeholder="Paste news content here..."></textarea>
+            <button id="verify-btn" onclick="runArticleAnalysis()" class="btn-cyan w-full py-4 font-bold uppercase tracking-widest">Verify Content</button>
+            
+            <div id="article-results" class="hidden mt-10 p-8 border border-gray-800 rounded-xl bg-[#0d0d0d]">
+                <div class="flex justify-between items-end mb-6">
+                    <div><p class="text-xs text-gray-500 uppercase mb-1">Verdict</p><h3 id="article-verdict-text" class="text-4xl font-black italic">---</h3></div>
+                    <div class="text-right"><p class="text-xs text-gray-500 uppercase mb-1">Trust Score</p><span id="article-confidence" class="text-2xl font-bold text-[#00e5ff]">0%</span></div>
+                </div>
+                <ul id="article-reasons" class="space-y-3 border-t border-gray-800 pt-6 text-gray-400 text-sm"></ul>
+                <button onclick="location.reload()" class="w-full mt-8 py-2 text-xs text-gray-600 hover:text-white uppercase">Reset</button>
+            </div>
+        </div>
+    </main>
+
+    <main id="url-page" class="min-h-screen hidden flex flex-col items-center p-6 pt-20">
+        <div class="max-w-3xl w-full">
+            <button onclick="showPage('hub-page')" class="text-[#00e5ff] mb-8 flex items-center gap-2 hover:underline text-xs uppercase tracking-widest">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Hub
+            </button>
+            <h2 class="text-4xl font-bold mb-6">URL <span class="text-[#00e5ff]">Inspector</span></h2>
+            <input id="url-input" type="text" class="w-full rounded-xl p-6 mb-4" placeholder="https://example.com/news/story">
+            <button id="inspect-btn" onclick="runUrlAnalysis()" class="btn-cyan w-full py-4 font-bold uppercase tracking-widest">Inspect Domain</button>
+            
+            <div id="url-results" class="hidden mt-10 p-8 border border-gray-800 rounded-xl bg-[#0d0d0d]">
+                <div class="flex justify-between items-end mb-6">
+                    <div><p class="text-xs text-gray-500 uppercase mb-1">Safety Rating</p><h3 id="url-verdict-text" class="text-4xl font-black italic">---</h3></div>
+                    <div class="text-right"><p class="text-xs text-gray-500 uppercase mb-1">Risk Factor</p><span id="url-confidence" class="text-2xl font-bold text-[#00e5ff]">0%</span></div>
+                </div>
+                <ul id="url-reasons" class="space-y-3 border-t border-gray-800 pt-6 text-gray-400 text-sm"></ul>
+                <button onclick="location.reload()" class="w-full mt-8 py-2 text-xs text-gray-600 hover:text-white uppercase">New Inspection</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // NAVIGATION ENGINE
+        function showPage(pageId) {
+            ['landing-page', 'hub-page', 'image-page', 'article-page', 'url-page'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(pageId).classList.remove('hidden');
+            lucide.createIcons();
+            window.scrollTo(0,0);
+        }
+
+        // IMAGE ANALYSIS LOGIC
+        const fileInput = document.getElementById('file-input');
+        const dropZone = document.getElementById('drop-zone');
+        const imagePreview = document.getElementById('image-preview');
+        const analyzeBtn = document.getElementById('analyze-btn');
+
+        dropZone.onclick = () => fileInput.click();
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (f) => {
+                    imagePreview.src = f.target.result;
+                    imagePreview.classList.remove('hidden');
+                    document.getElementById('upload-placeholder').classList.add('hidden');
+                    analyzeBtn.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        async function runImageAnalysis() {
+            const file = fileInput.files[0];
+            analyzeBtn.innerText = "Processing Pixels...";
+            const formData = new FormData();
+            formData.append("file", file);
+            try {
+                const res = await fetch("http://localhost:8000/analyze-image", { method: "POST", body: formData });
+                const data = await res.json();
+                renderResults('results-area', 'verdict-text', 'confidence-score', 'reasons-list', data);
+                analyzeBtn.classList.add('hidden');
+            } catch (e) { alert("Backend Offline. Run python app.py"); }
+        }
+
+        // ARTICLE LOGIC
+        async function runArticleAnalysis() {
+            const text = document.getElementById('article-input').value;
+            if(!text) return;
+            const btn = document.getElementById('verify-btn');
+            btn.innerText = "Analyzing Text...";
+            try {
+                const res = await fetch("http://localhost:8000/verify-article", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ text })
+                });
+                const data = await res.json();
+                renderResults('article-results', 'article-verdict-text', 'article-confidence', 'article-reasons', data);
+                btn.classList.add('hidden');
+            } catch (e) { alert("Backend Offline."); }
+        }
+
+        // URL LOGIC
+        async function runUrlAnalysis() {
+            const url = document.getElementById('url-input').value;
+            if(!url) return;
+            const btn = document.getElementById('inspect-btn');
+            btn.innerText = "Inspecting Domain...";
+            try {
+                const res = await fetch("http://localhost:8000/inspect-url", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ url })
+                });
+                const data = await res.json();
+                renderResults('url-results', 'url-verdict-text', 'url-confidence', 'url-reasons', data);
+                btn.classList.add('hidden');
+            } catch (e) { alert("Backend Offline."); }
+        }
+
+        // HELPER: UI Rendering
+        function renderResults(areaId, vId, cId, rId, data) {
+            document.getElementById(areaId).classList.remove('hidden');
+            const vText = document.getElementById(vId);
+            vText.innerText = data.verdict;
+            
+            // Color Logic
+            vText.className = "text-4xl font-black italic " + (
+                data.verdict.includes('✅') || data.verdict.includes('SAFE') ? 'text-green-500' : 
+                data.verdict.includes('❌') || data.verdict.includes('DANGEROUS') ? 'text-red-500' : 'text-yellow-500'
+            );
+
+            document.getElementById(cId).innerText = data.confidence + "%";
+            document.getElementById(rId).innerHTML = data.reasons.map(r => `<li class="flex items-start gap-3"><span class="text-[#00e5ff]">›</span> ${r}</li>`).join('');
+        }
+
+        lucide.createIcons();
+    </script>
+</body>
+</html>
